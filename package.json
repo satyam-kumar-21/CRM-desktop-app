@@ -1,0 +1,38 @@
+{
+  "name": "SatyamCRM-Desktop",
+  "version": "1.0.0",
+  "description": "Desktop wrapper for the Satyam CRM web app",
+  "author": "SatyamCRM",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "rimraf dist && electron-builder --win portable"
+  },
+  "build": {
+    "appId": "com.satyam.crm.desktop",
+    "productName": "SatyamCRM",
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "portable",
+          "arch": ["x64"]
+        }
+      ],
+      "icon": "app-icon.ico",
+      "signAndEditExecutable": false,
+      "sign": false,
+      "verifyUpdateCodeSignature": false
+    },
+    "portable": {
+      "artifactName": "SatyamCRM-Portable.exe"
+    }
+  },
+  "devDependencies": {
+    "electron": "^31.0.0",
+    "electron-builder": "^24.13.0",
+    "rimraf": "^5.0.1"
+  }
+}

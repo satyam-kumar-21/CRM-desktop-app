@@ -15,4 +15,4 @@ npm start
 npm run dist
 ```
 
-This creates a portable .exe in the `dist` folder.
+This creates a single portable `.exe` in the `dist` folder that can be copied to the Desktop and launched without installation.

@@ -37,6 +37,7 @@
   "devDependencies": {
     "electron": "^43.4.0",
     "electron-builder": "^24.13.0",
+    "electron-packager": "^17.1.2",
     "rimraf": "^5.0.1"
   }
 }

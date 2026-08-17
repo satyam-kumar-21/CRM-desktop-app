@@ -6,7 +6,7 @@
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "dist": "rimraf dist && electron-builder --win portable"
+    "dist": "rimraf dist && electron-builder --win nsis"
   },
   "build": {
     "appId": "com.satyam.crm.desktop",
@@ -17,8 +17,10 @@
     "win": {
       "target": [
         {
-          "target": "portable",
-          "arch": ["x64"]
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
         }
       ],
       "icon": "app-icon.ico",
@@ -26,12 +28,14 @@
       "sign": false,
       "verifyUpdateCodeSignature": false
     },
-    "portable": {
-      "artifactName": "SatyamCRM-Portable.exe"
+    "nsis": {
+      "oneClick": true,
+      "allowToChangeInstallationDirectory": false,
+      "artifactName": "SatyamCRM-Setup.exe"
     }
   },
   "devDependencies": {
-    "electron": "^31.0.0",
+    "electron": "^43.4.0",
     "electron-builder": "^24.13.0",
     "rimraf": "^5.0.1"
   }

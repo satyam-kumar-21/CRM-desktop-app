@@ -6,15 +6,26 @@
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "dist": "rimraf dist && electron-builder --win portable",
-    "dist:ps": "powershell -NoProfile -Command \"$env:CSC_IDENTITY_AUTO_DISCOVERY='false'; rimraf dist; electron-builder --win portable\""
+    "bundle": "node scripts/bundle-frontend.js",
+    "dist": "npm run bundle && rimraf dist && electron-builder --win portable",
+    "dist:ps": "powershell -NoProfile -Command \"$env:CSC_IDENTITY_AUTO_DISCOVERY='false'; npm run bundle; if (Test-Path dist) { Remove-Item -Recurse -Force dist }; npx electron-builder --win portable\""
   },
   "build": {
     "appId": "com.satyam.crm.desktop",
     "productName": "SatyamCRM",
     "files": [
       "main.js",
+      "server-launcher.js",
       "app-icon.png"
+    ],
+    "extraResources": [
+      {
+        "from": "frontend",
+        "to": "frontend",
+        "filter": [
+          "**/*"
+        ]
+      }
     ],
     "directories": {
       "output": "dist"

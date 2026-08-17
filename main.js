@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, shell } = require('electron');
 const path = require('path');
 
 const DEFAULT_URL = 'https://crm-frontend-blue-six.vercel.app';
@@ -14,7 +14,7 @@ function createLoadingWindow() {
     center: true,
     transparent: true,
     backgroundColor: '#0b1120',
-    icon: path.join(__dirname, 'app-icon.ico'),
+    icon: path.join(__dirname, 'app-icon.png'),
   });
 
   loading.loadURL(`data:text/html;charset=utf-8,${encodeURIComponent(`
@@ -25,13 +25,11 @@ function createLoadingWindow() {
           :root {
             --bg-1: #040d1a;
             --bg-2: #0b1f2d;
-            --panel: rgba(10, 19, 31, 0.96);
             --line: rgba(45, 212, 191, 0.38);
             --teal: #20d7c3;
             --teal-soft: #8cf1ea;
             --gold: #f7c948;
             --text: #edf6ff;
-            --muted: #9fb9c8;
           }
 
           html, body {
@@ -60,13 +58,6 @@ function createLoadingWindow() {
             align-items: center;
             justify-content: center;
             color: var(--text);
-          }
-
-          .card::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, rgba(247, 201, 72, 0.06), transparent 28%, rgba(32, 215, 195, 0.08));
           }
 
           .content {
@@ -120,7 +111,6 @@ function createLoadingWindow() {
             margin: 0;
             font-size: 29px;
             line-height: 1.2;
-            letter-spacing: 0.2px;
             font-weight: 700;
             color: var(--text);
           }
@@ -132,23 +122,6 @@ function createLoadingWindow() {
             letter-spacing: 0.24em;
             text-transform: uppercase;
             font-weight: 700;
-          }
-
-          .stats {
-            display: flex;
-            gap: 12px;
-            margin-top: 22px;
-          }
-
-          .pill {
-            padding: 8px 12px;
-            border-radius: 999px;
-            background: rgba(247, 201, 72, 0.08);
-            border: 1px solid rgba(247, 201, 72, 0.25);
-            color: #f8f1d6;
-            font-size: 10px;
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
           }
 
           .loader {
@@ -188,16 +161,8 @@ function createLoadingWindow() {
                 <div class="tag">Trading Desk</div>
               </div>
             </div>
-
             <h1>CRM & Operations Suite</h1>
             <div class="subtitle">Launching platform</div>
-
-            <div class="stats">
-              <div class="pill">Secure</div>
-              <div class="pill">Live</div>
-              <div class="pill">Smart</div>
-            </div>
-
             <div class="loader"></div>
           </div>
         </div>
@@ -208,35 +173,102 @@ function createLoadingWindow() {
   return loading;
 }
 
+function createErrorPage(message) {
+  return `data:text/html;charset=utf-8,${encodeURIComponent(`
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <style>
+          body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+          }
+          .panel {
+            max-width: 520px;
+            padding: 32px;
+            border-radius: 20px;
+            border: 1px solid rgba(45, 212, 191, 0.35);
+            background: rgba(15, 23, 42, 0.95);
+            text-align: center;
+          }
+          h1 { margin: 0 0 12px; font-size: 24px; }
+          p { margin: 0 0 20px; color: #94a3b8; line-height: 1.5; }
+          button {
+            border: none;
+            border-radius: 999px;
+            padding: 12px 24px;
+            background: linear-gradient(90deg, #f7c948, #20d7c3);
+            color: #07121d;
+            font-weight: 700;
+            cursor: pointer;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="panel">
+          <h1>Unable to connect</h1>
+          <p>${message}</p>
+          <button onclick="location.reload()">Try again</button>
+        </div>
+      </body>
+    </html>
+  `)}`;
+}
+
 function createWindow() {
   const loading = createLoadingWindow();
+  let mainReady = false;
+
   const win = new BrowserWindow({
     width: 1440,
     height: 900,
     minWidth: 1200,
     minHeight: 760,
+    show: false,
     autoHideMenuBar: true,
     backgroundColor: '#0f172a',
     title: 'Satyam CRM',
-    icon: path.join(__dirname, 'app-icon.ico'),
+    icon: path.join(__dirname, 'app-icon.png'),
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
-      sandbox: false,
+      sandbox: true,
     },
+  });
+
+  const revealMainWindow = () => {
+    if (mainReady) return;
+    mainReady = true;
+    setTimeout(() => {
+      if (!loading.isDestroyed()) loading.close();
+      win.show();
+      win.focus();
+    }, 1200);
+  };
+
+  win.webContents.on('did-fail-load', (_event, errorCode, errorDescription) => {
+    if (errorCode === -3) return;
+    if (!loading.isDestroyed()) loading.close();
+    win.show();
+    win.loadURL(
+      createErrorPage(
+        `${errorDescription}. Please check your internet connection and try again.`
+      )
+    );
   });
 
   win.loadURL(APP_URL);
 
-  win.once('ready-to-show', () => {
-    setTimeout(() => {
-      loading.close();
-      win.show();
-    }, 1500);
-  });
+  win.once('ready-to-show', revealMainWindow);
 
   win.webContents.setWindowOpenHandler(({ url }) => {
-    require('electron').shell.openExternal(url);
+    shell.openExternal(url);
     return { action: 'deny' };
   });
 }

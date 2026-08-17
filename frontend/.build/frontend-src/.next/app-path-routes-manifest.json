@@ -1,0 +1,8 @@
+{
+  "/_not-found/page": "/_not-found",
+  "/favicon.ico/route": "/favicon.ico",
+  "/(auth)/company-admin/login/page": "/company-admin/login",
+  "/page": "/",
+  "/(dashboard)/employee/dashboard/page": "/employee/dashboard",
+  "/(dashboard)/company-admin/dashboard/page": "/company-admin/dashboard"
+}

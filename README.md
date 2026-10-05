@@ -13,7 +13,8 @@ Copy this file to Desktop (or share it with anyone). Double-click to open — no
 ## Requirements for end users
 
 - Windows 10 or 11 (64-bit)
-- Internet connection (the app loads the live CRM from Vercel)
+- Backend server running on http://localhost:5000
+- Frontend server running on http://localhost:3000
 
 ## Run locally (development)
 
@@ -50,8 +51,8 @@ No Node.js, no setup, no installer — just the one `.exe` file.
 ## Optional: point to a different URL
 
 ```powershell
-$env:APP_URL='https://your-custom-url.com'
+$env:APP_URL='https://crm-frontend-blue-six.vercel.app'
 npm start
 ```
 
-Default URL: `https://crm-frontend-blue-six.vercel.app`
+Default URL: `http://localhost:3000` (local development)

@@ -1,7 +1,7 @@
 const { app, BrowserWindow, shell } = require('electron');
 const path = require('path');
 
-const DEFAULT_URL = 'https://crm-frontend-blue-six.vercel.app';
+const DEFAULT_URL = 'http://localhost:3000';
 const APP_URL = process.env.APP_URL || DEFAULT_URL;
 
 function createLoadingWindow() {
